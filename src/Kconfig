@@ -1,0 +1,9 @@
+config OOK_GPIO
+	tristate "GPIO-based OOK modulation driver"
+	depends on GENERIC_GPIO
+	help
+	  This is an OOK modulation driver that uses a GPIO to generate
+	  the signal (to be used with a 433MHz transmitter for instance).
+
+	  This support is also available as a module.  If so, the module
+	  will be called ook-gpio.
