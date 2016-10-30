@@ -30,7 +30,7 @@
 
 #define DRV_NAME		"ook-gpio"
 #define DRV_DESC		"GPIO-based OOK modulation driver"
-#define DRV_VERSION		"0.2"
+#define DRV_VERSION		"0.3"
 
 /* Hard-coded GPIO to use */
 /* GPIO 7 is free on TP-Link WR703n */
