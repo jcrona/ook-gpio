@@ -31,7 +31,7 @@ The __timings__ sysfs expected format is __THstart, TLstart, THend, TLend, THbit
 - fmt : the bit format (order of the High/Low transition) which is 0 for High/Low, and 1 for Low/High
 - count : the number of times the frame must be sent
 
-The __frame__ expected format is the bytes of the frame, separated by ",".
+The __frame__ expected format is the number of bits in the frame followed by a ",", then the bytes of the frame, also separated by ",".
 
 
 ## License
