@@ -23,12 +23,13 @@ Once registered, this driver adds two sysfs entries:
 - __/sys/devices/platform/ook-gpio.0/frame__
 
 The first one is used to configure the OOK timings, while the second one will be used to send the actual frame.
-The __timings__ sysfs expected format is __THstart, TLstart, THend, TLend, THbit0, TLbit0, THbit1, TLbit1, fmt, count__ with:
+The __timings__ sysfs expected format is __Tbase or THstart, TLstart, THend, TLend, THbit0, TLbit0, THbit1, TLbit1, fmt, count__ with:
+- Tbase : the duration of a state (Low for 0, High for 1) in Raw mode (fmt = 2)
 - TH/TLstart : High and Low duration of the starting marker
 - TH/TLend : High and Low duration of the ending marker
 - TH/TLbit0 : High and Low duration of the logical bit 0
 - TH/TLbit1 : High and Low duration of the logical bit 1
-- fmt : the bit format (order of the High/Low transition) which is 0 for High/Low, and 1 for Low/High
+- fmt : the bit format (order of the High/Low transition) which is 0 for High/Low, 1 for Low/High, and 2 for Raw (no transition)
 - count : the number of times the frame must be sent
 
 The __frame__ expected format is the number of bits in the frame followed by a ",", then the bytes of the frame, also separated by ",".

@@ -39,15 +39,16 @@
 enum bit_fmt {
 	BIT_FMT_HL =		0,
 	BIT_FMT_LH =		1,
+	BIT_FMT_RAW =		2,
 	BIT_FMT_MAX
 };
 
 struct ook_gpio_platform_data {
 	int gpio;
+	unsigned int base_start_h;
 	unsigned int start_l;
-	unsigned int start_h;
-	unsigned int end_l;
 	unsigned int end_h;
+	unsigned int end_l;
 	unsigned int bit0_h;
 	unsigned int bit0_l;
 	unsigned int bit1_h;
@@ -73,6 +74,9 @@ static void ook_send_zero(struct ook_gpio_platform_data *pdata)
 
 		gpio_set_value(pdata->gpio, 1);
 		udelay(pdata->bit0_h);
+	} else if (pdata->fmt == BIT_FMT_RAW) {
+		gpio_set_value(pdata->gpio, 0);
+		udelay(pdata->base_start_h);
 	}
 }
 
@@ -91,6 +95,9 @@ static void ook_send_one(struct ook_gpio_platform_data *pdata)
 
 		gpio_set_value(pdata->gpio, 1);
 		udelay(pdata->bit1_h);
+	} else if (pdata->fmt == BIT_FMT_RAW) {
+		gpio_set_value(pdata->gpio, 1);
+		udelay(pdata->base_start_h);
 	}
 }
 
@@ -99,7 +106,7 @@ static void ook_send_start(struct ook_gpio_platform_data *pdata)
 	/* Send the starting marker */
 	if (pdata->fmt == BIT_FMT_HL) {
 		gpio_set_value(pdata->gpio, 1);
-		udelay(pdata->start_h);
+		udelay(pdata->base_start_h);
 
 		gpio_set_value(pdata->gpio, 0);
 		udelay(pdata->start_l);
@@ -108,7 +115,7 @@ static void ook_send_start(struct ook_gpio_platform_data *pdata)
 		udelay(pdata->start_l);
 
 		gpio_set_value(pdata->gpio, 1);
-		udelay(pdata->start_h);
+		udelay(pdata->base_start_h);
 	}
 }
 
@@ -173,7 +180,7 @@ static ssize_t show_timings(struct device *dev,
 	struct ook_gpio_platform_data *pdata = dev->platform_data;
 
 	return sprintf(buf, "%u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
-			pdata->start_h, pdata->start_l, pdata->end_h, pdata->end_l,
+			pdata->base_start_h, pdata->start_l, pdata->end_h, pdata->end_l,
 			pdata->bit0_h, pdata->bit0_l, pdata->bit1_h, pdata->bit1_l,
 			(unsigned int) pdata->fmt, pdata->count);
 }
@@ -186,7 +193,7 @@ static ssize_t store_timings(struct device *dev,
 	unsigned int bit_fmt;
 
 	if (sscanf(buf, "%u,%u,%u,%u,%u,%u,%u,%u,%u,%u",
-			&pdata->start_h, &pdata->start_l, &pdata->end_h, &pdata->end_l,
+			&pdata->base_start_h, &pdata->start_l, &pdata->end_h, &pdata->end_l,
 			&pdata->bit0_h, &pdata->bit0_l, &pdata->bit1_h, &pdata->bit1_l,
 			&bit_fmt, &pdata->count) != 10) {
 		printk(KERN_ERR "%s: Unable to parse input !\n", __func__);
@@ -342,7 +349,7 @@ static int __init ook_gpio_init(void)
 	}
 
 	pdata.gpio = OOK_GPIO_NR;
-	pdata.start_h = 0;
+	pdata.base_start_h = 0;
 	pdata.start_l = 0;
 	pdata.end_h = 0;
 	pdata.end_l = 0;
